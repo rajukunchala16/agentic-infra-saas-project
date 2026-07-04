@@ -1,0 +1,44 @@
+llm:
+  provider: openai
+  model: gpt-4o-mini
+
+embeddings:
+  provider: huggingface
+  model: all-MiniLM-L6-v2
+
+
+vector_stores:
+  chroma:
+    enabled: true
+    host: localhost
+    port: 8000
+    collection_name: rag_documents
+    persist_directory: ./chroma_data
+
+  qdrant:
+    enabled: false
+    url: https://52f4028f-368f-4f09-b466-a6d382d493a5.us-east-1-1.aws.cloud.qdrant.io
+    collection_name: agentic-ai
+    api_key: ${QDRANT_API_KEY}
+
+  # graph_vector_store:
+  #   enabled: true
+  #   provider: neo4j
+  #   uri: bolt://localhost:7687
+  #   username: neo4j
+  #   password: ${NEO4J_PASSWORD}
+  #   database: neo4j
+  #   node_label: Document
+  #   relationship_type: RELATED_TO
+
+rag:
+  type: semantic
+  chunk_size: 800
+  chunk_overlap: 150
+  retrieval:
+    top_k: 5
+    similarity_threshold: 0.75
+    hybrid_search: false
+  memory:
+    enabled: true
+    conversation_window: 6

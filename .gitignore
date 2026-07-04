@@ -1,0 +1,32 @@
+# ==========================
+# Environment Variables
+# ==========================
+.env
+.env.*
+!.env.example
+
+
+# ==========================
+# Python
+# ==========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.python-version
+.venv/
+venv/
+env/
+
+# ==========================
+# Build Output
+# ==========================
+dist/
+build/
+out/
+target/
+bin/
+coverage/
+.cache/
+tmp/
+temp/

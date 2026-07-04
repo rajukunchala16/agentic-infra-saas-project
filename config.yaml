@@ -6,6 +6,28 @@ embeddings:
   provider: huggingface
   model: all-MiniLM-L6-v2
 
+memory:
+  # Base directory for all memory-related data
+  base_path: "./memory_store"
+
+  # SQLite checkpoint database (created inside each session folder)
+  checkpoint_db: "checkpoints.db"
+
+  # Session metadata file
+  sessions_file: "sessions.json"
+
+  # Short-term memory settings
+  short_term:
+    enabled: true
+    max_tokens_before_summary: 3000
+    messages_to_keep: 10
+
+  # Long-term memory (for future use)
+  long_term:
+    enabled: false
+    provider: null        # chroma | qdrant | pinecone | postgres
+    collection_name: "assistant_memory"
+
 
 vector_stores:
   chroma:

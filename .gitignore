@@ -30,3 +30,68 @@ coverage/
 .cache/
 tmp/
 temp/
+
+# ==========================
+# IDE & Editor
+# ==========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+
+# ==========================
+# Logs
+# ==========================
+logs/
+*.log
+*.log.*
+
+# ==========================
+# Database Files
+# ==========================
+*.db
+*.sqlite
+*.sqlite3
+data/
+
+# ==========================
+# OS & System Files
+# ==========================
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ==========================
+# Package Managers
+# ==========================
+node_modules/
+package-lock.json
+yarn.lock
+
+# ==========================
+# IDE Specific
+# ==========================
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ==========================
+# Miscellaneous
+# ==========================
+*.egg-info/
+.eggs/
+*.egg
+.ipynb_checkpoints/
+*.ipynb
+.streamlit/
+

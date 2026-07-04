@@ -8,6 +8,7 @@ from rich.panel import Panel
 from config import config
 from llm.factory import get_llm
 from observability import logger
+from agent.factory import build_agent
 
 
 console = Console()

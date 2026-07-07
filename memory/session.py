@@ -7,7 +7,6 @@ from pathlib import Path
 
 from config import config
 
-
 MEMORY_PATH = Path(config["memory"]["base_path"])
 MEMORY_PATH.mkdir(parents=True, exist_ok=True)
 

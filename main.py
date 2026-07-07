@@ -13,30 +13,52 @@ from agent.factory import build_agent
 
 console = Console()
 
+from memory.session import SessionManager
+from memory.short_term_memory import get_checkpoint
+from agent.factory import build_agent
 
-async def ask_llm(llm, question: str) -> str:
-    """
-    Send a question to the configured LLM.
-    """
-    logger.info("Sending request to LLM")
+ # Load environment variables
+load_dotenv()
 
-    response = await llm.ainvoke(question)
-
-    logger.info("Received response from LLM")
-
-    return response.content
 
 
 async def main():
-    # Load environment variables
-    load_dotenv()
-
     logger.info("Application started")
     logger.info("Configuration loaded")
 
     llm = get_llm()
     logger.info("LLM initialized")
 
+    logger.info("Initializing session manager")
+
+    session_manager = SessionManager()
+
+    session = session_manager.create()
+
+    logger.info(
+        "Created session: %s (%s)",
+        session.name,
+        session.id,
+    )
+
+    checkpoint = await get_checkpoint(session)
+
+    logger.info("Checkpoint initialized")
+
+    agent = await build_agent(
+        checkpoint=checkpoint
+    )
+
+    thread_config = {
+        "configurable": {
+            "thread_id": session.id,
+        }
+    }
+
+    logger.info(
+        "Agent initialized for session %s",
+        session.id,
+    )
     console.print(
         Panel.fit(
             "[bold cyan]AI Assistant[/bold cyan]\n\n"
@@ -46,41 +68,65 @@ async def main():
             title="Welcome",
         )
     )
-
+    
     while True:
         try:
-            user_input = Prompt.ask("[bold green]>[/bold green]").strip()
+            user_input = Prompt.ask(
+                "[bold green]>[/bold green]"
+            ).strip()
 
-            # Skip empty input
             if not user_input:
                 continue
 
-            # Exit
             if user_input.lower() == "exit":
                 logger.info("Application terminated by user")
-                console.print("[bold yellow]Goodbye! 👋[/bold yellow]")
+                console.print(
+                    "[bold yellow]Goodbye! 👋[/bold yellow]"
+                )
                 break
 
-            # Validate command
             if not user_input.startswith("/ask"):
                 console.print(
-                    "[bold red]Invalid command.[/bold red] Use [cyan]/ask <question>[/cyan]"
+                    "[bold red]Invalid command.[/bold red] "
+                    "Use [cyan]/ask <question>[/cyan]"
                 )
                 continue
 
             question = user_input[4:].strip()
 
             if not question:
-                console.print("[yellow]Please enter a question.[/yellow]")
+                console.print(
+                    "[yellow]Please enter a question.[/yellow]"
+                )
                 continue
 
-            logger.info(f"Question: {question}")
+            logger.info("Question: %s", question)
 
             with console.status(
                 "[bold cyan]Thinking...[/bold cyan]",
                 spinner="dots",
             ):
-                answer = await ask_llm(llm, question)
+                logger.debug(
+                    "Invoking LangGraph agent "
+                    "(thread_id=%s)",
+                    session.id,
+                )
+
+                result = await agent.ainvoke(
+                    {
+                        "messages": [
+                            {
+                                "role": "user",
+                                "content": question,
+                            }
+                        ]
+                    },
+                    config=thread_config,
+                )
+
+            answer = result["messages"][-1].content
+
+            logger.info("Answer generated successfully")
 
             console.print("\n[bold blue]AI:[/bold blue]")
             console.print(answer)
@@ -88,13 +134,20 @@ async def main():
 
         except KeyboardInterrupt:
             logger.info("KeyboardInterrupt received")
-            console.print("\n[yellow]Exiting...[/yellow]")
+            console.print(
+                "\n[yellow]Exiting...[/yellow]"
+            )
             break
 
         except Exception:
-            logger.exception("Unexpected error")
-            console.print("[bold red]An unexpected error occurred.[/bold red]")
+            logger.exception(
+                "Unexpected error while processing request"
+            )
 
+            console.print(
+                "[bold red]An unexpected error occurred.[/bold red]"
+            )
 
+    
 if __name__ == "__main__":
     asyncio.run(main())

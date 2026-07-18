@@ -10,7 +10,8 @@ from llm.factory import get_llm
 from observability import logger
 from agent.factory import build_agent
 
-
+from rag.ingestion.factory import get_indexer
+from agent.orchestrator import handle_query
 console = Console()
 
 from memory.session import SessionManager
@@ -59,6 +60,7 @@ async def main():
         "Agent initialized for session %s",
         session.id,
     )
+   
     console.print(
         Panel.fit(
             "[bold cyan]AI Assistant[/bold cyan]\n\n"
@@ -68,6 +70,9 @@ async def main():
             title="Welcome",
         )
     )
+    logger.info("Starting Pinecone indexer")
+    status = get_indexer()
+    logger.info("Indexer status: %s", status)
     
     while True:
         try:
@@ -112,19 +117,13 @@ async def main():
                     session.id,
                 )
 
-                result = await agent.ainvoke(
-                    {
-                        "messages": [
-                            {
-                                "role": "user",
-                                "content": question,
-                            }
-                        ]
-                    },
-                    config=thread_config,
+                result =  await handle_query(
+                            agent=agent,
+                            question=user_input,
+                            thread_id=session.id,
                 )
 
-            answer = result["messages"][-1].content
+            answer = result
 
             logger.info("Answer generated successfully")
 

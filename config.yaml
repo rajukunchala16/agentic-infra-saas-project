@@ -30,18 +30,25 @@ memory:
 
 
 vector_stores:
-  chroma:
-    enabled: true
-    host: localhost
-    port: 8000
-    collection_name: rag_documents
-    persist_directory: ./chroma_data
+    # enabled: false
+    # host: localhost
+    # port: 8000
+    # collection_name: rag_documents
+    # persist_directory: ./chroma_data
 
-  qdrant:
-    enabled: false
-    url: https://52f4028f-368f-4f09-b466-a6d382d493a5.us-east-1-1.aws.cloud.qdrant.io
-    collection_name: agentic-ai
-    api_key: ${QDRANT_API_KEY}
+  # qdrant:
+  #   enabled: false
+  #   url: https://52f4028f-368f-4f09-b466-a6d382d493a5.us-east-1-1.aws.cloud.qdrant.io
+  #   collection_name: agentic-ai
+  #   api_key: ${QDRANT_API_KEY}
+
+  provider: pinecone
+  enabled: true
+  host: https://genai-system-design-86yrheq.svc.aped-4627-b74a.pinecone.io
+  index_name: genai-system-design
+  namespace: default
+  
+  data_path: sample_rest_api_logs.txt
 
   # graph_vector_store:
   #   enabled: true
@@ -54,12 +61,14 @@ vector_stores:
   #   relationship_type: RELATED_TO
 
 rag:
+  mode: "pinecone"
   type: semantic
   chunk_size: 800
   chunk_overlap: 150
   retrieval:
     top_k: 5
-    similarity_threshold: 0.75
+    similarity_threshochroma:
+    ld: 0.75
     hybrid_search: false
   memory:
     enabled: true

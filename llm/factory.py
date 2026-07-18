@@ -23,8 +23,8 @@ def get_llm():
 
 
 def get_embedder():
-    provider = config["embedding"]["provider"].lower()
-    model = config["embedding"]["model"].lower()
+    provider = config["embeddings"]["provider"].lower()
+    model = config["embeddings"]["model"].lower()
 
     if provider == "openai":
         return OpenAIEmbeddings(
